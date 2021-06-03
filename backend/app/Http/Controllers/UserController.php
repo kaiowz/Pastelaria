@@ -30,7 +30,6 @@ class UserController extends Controller
         }
     }
 
-
     public function create(Request $req){
         $name = trim($req->input('name'));
         $email = trim($req->input('email'));

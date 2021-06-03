@@ -8,13 +8,6 @@ use Image;
 
 class PastryController extends Controller
 {
-    private $loggedUser;
-
-    public function __construct(){
-        $this->middleware('auth:api');
-        $this->loggedUser = auth()->user();
-    }
-
     public function index($id = false){
         if (!$id){
             $pastries = Pastry::all();
@@ -71,7 +64,7 @@ class PastryController extends Controller
             $filename = md5(time().rand(0, 9999)).'.jpg';
             $destPath = public_path('/media/assets');
 
-            $img = Image::make($photo->path())
+            Image::make($photo->path())
                 ->fit(300, 300)
                 ->save("$destPath/$filename");
 
