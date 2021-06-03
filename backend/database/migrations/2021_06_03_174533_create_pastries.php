@@ -18,6 +18,7 @@ class CreatePastries extends Migration
             $table->string('name', 100);
             $table->string('photo', 100);
             $table->float('price');
+            $table->boolean('isDeleted')->default(false);
             $table->timestamps();
         });
     }

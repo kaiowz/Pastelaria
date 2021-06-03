@@ -25,6 +25,7 @@ class CreateUsers extends Migration
             $table->string('neighborhood', 100);
             $table->string('cep', 50);
             $table->string('token', 200)->nullable();
+            $table->boolean('isDeleted')->default(false);
             $table->timestamps();
         });
     }

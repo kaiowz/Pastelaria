@@ -19,6 +19,7 @@ class CreateOrders extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->unsignedBigInteger('pastry_id');
             $table->foreign('pastry_id')->references('id')->on('users');
+            $table->boolean('isDeleted')->default(false);
             $table->timestamps();
         });
     }
