@@ -43,34 +43,34 @@ class UserController extends Controller
         $neighborhood = trim($req->input('neighborhood'));
         $cep = trim($req->input('cep'));
 
-        if ($name && $email && $password && $passwordConfirmation && $phone &&
-        $birthdate && $address && $neighborhood && $cep){
-            $emailExists = User::where('email', $email)->count();
+        if (!$name && !$email && !$password &&
+        !$passwordConfirmation && !$phone && !$birthdate &&
+        !$address && !$neighborhood && !$cep) return response()->json(['error'=>'Você não preencheu todos os campos corretamente'], 400);
 
-            if ($emailExists != 0) return response()->json(['error'=>'E-mail já cadastrado'], 422);
-            if (!$this->isValidPassword($password)) return response()->json(['error'=>'A senha é muito fraca. Certifique-se de inserir pelo menos um caractere minúsculo, maiúsculo, especial e no mínimo 6 caracteres'], 422);
-            if ($password != $passwordConfirmation) return response()->json(['error'=>'Senhas não coincidem'], 422);
+        $emailExists = User::where('email', $email)->count();
 
-            $hash = password_hash($password, PASSWORD_DEFAULT);
-            $newUser = new User();
-            $newUser->name = $name;
-            $newUser->email = $email;
-            $newUser->password = $hash;
-            $newUser->phone = $phone;
-            $newUser->birthdate = $birthdate;
-            $newUser->address = $address;
-            $newUser->addon = $addon;
-            $newUser->neighborhood = $neighborhood;
-            $newUser->cep = $cep;
-            $newUser->save();
+        if ($emailExists != 0) return response()->json(['error'=>'E-mail já cadastrado'], 422);
+        if (!$this->isValidPassword($password)) return response()->json(['error'=>'A senha é muito fraca. Certifique-se de inserir pelo menos um caractere minúsculo, maiúsculo, especial e no mínimo 6 caracteres'], 422);
+        if ($password != $passwordConfirmation) return response()->json(['error'=>'Senhas não coincidem'], 422);
 
-            $token = Auth::attempt(['email'=>$email, 'password'=>$password]);
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $newUser = new User();
+        $newUser->name = $name;
+        $newUser->email = $email;
+        $newUser->password = $hash;
+        $newUser->phone = $phone;
+        $newUser->birthdate = $birthdate;
+        $newUser->address = $address;
+        $newUser->addon = $addon;
+        $newUser->neighborhood = $neighborhood;
+        $newUser->cep = $cep;
+        $newUser->save();
 
-            if (!$token) return response()->json(['error'=>'Ocorreu um erro interno!'], 500);
+        $token = Auth::attempt(['email'=>$email, 'password'=>$password]);
 
-            return response()->json(['token'=>$token], 200);
+        if (!$token) return response()->json(['error'=>'Ocorreu um erro interno!'], 500);
 
-        }else return response()->json(['error'=>'Você não preencheu todos os campos corretamente'], 400);
+        return response()->json(['token'=>$token], 200);
     }
 
     public function update(Request $req, $id){

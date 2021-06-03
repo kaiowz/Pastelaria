@@ -3,82 +3,64 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Pastry;
 
 class PastryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+    private $loggedUser;
+
+    public function __construct(){
+        $this->middleware('auth:api');
+        $this->loggedUser = auth()->user();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    public function index($id = false){
+        if (!$id){
+            $pastries = Pastry::all();
+            return response()->json(['result' => $pastries], 200);
+        }else{
+            $pastry = Pastry::find($id);
+            if (!$pastry) return response()->json(['error'=>'Id inválido'], 400);
+            return response()->json(['result' => $pastry], 200);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+    public function create(Request $req){
+        $name = trim($req->input('name'));
+        $price = floatval($req->input('price'));
+
+        if (!$name && !$price) return response()->json(['error' => 'Preencha os campos corretamente'], 400);
+
+        $newPastry = new Pastry();
+        $newPastry->name = $name;
+        $newPastry->price = $price;
+        $newPastry->save();
+
+        return response()->json(['result' => "Pastel criado com sucesso"], 200);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
+    public function update(Request $req, $id){
+        $name = trim($req->input('name'));
+        $price = floatval($req->input('price'));
+
+        $pastry = Pastry::find($id);
+        if (!$pastry) return response()->json(['error' => 'ID inválido'], 400);
+
+        if ($name) $pastry->name = $name;
+        if ($price) $pastry->price = $price;
+
+        $pastry->save();
+
+        return response()->json(['result' => "Pastel atualizado com sucesso"], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+    public function delete($id = false){
+        $pastry = Pastry::find($id);
+        if (!$pastry) return response()->json(['error'=>"Id inválido"]);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+        $pastry->isDeleted = true;
+        $pastry->save();
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        return response()->json(['result' => "Pastel deletado com sucesso"], 200);
     }
 }
