@@ -17,7 +17,7 @@ class CreatePastries extends Migration
             $table->id();
             $table->string('name', 100);
             $table->string('photo', 100);
-            $table->float('price', 3, 2);
+            $table->float('price');
             $table->timestamps();
         });
     }
