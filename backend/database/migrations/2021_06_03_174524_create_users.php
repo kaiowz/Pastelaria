@@ -17,13 +17,13 @@ class CreateUsers extends Migration
             $table->id();
             $table->string('name', 100);
             $table->string('email', 100);
-            $table->string('telefone', 50);
+            $table->string('phone', 50);
             $table->string('password', 200);
             $table->date('birthdate');
-            $table->string('address', 200);
-            $table->string('addon', 200);
-            $table->string('neighborhood', 200);
-            $table->string('cep', 200);
+            $table->string('address', 100);
+            $table->string('addon', 100);
+            $table->string('neighborhood', 100);
+            $table->string('cep', 50);
             $table->string('token', 200)->nullable();
             $table->timestamps();
         });
