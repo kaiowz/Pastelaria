@@ -42,3 +42,11 @@ Route::prefix('pastry')->group(function(){
     Route::get('/', [PastryController::class, 'index']);
     Route::delete('/{id}', [PastryController::class, 'delete']);
 });
+
+Route::prefix('order')->group(function(){
+    Route::post('/', [OrderController::class, 'create']);
+    Route::put('/{id}', [OrderController::class, 'update']);
+    Route::get('/{id}', [OrderController::class, 'index']);
+    Route::get('/', [OrderController::class, 'index']);
+    Route::delete('/{id}', [OrderController::class, 'delete']);
+});
