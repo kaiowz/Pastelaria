@@ -29,7 +29,6 @@ Route::prefix('auth')->group(function(){
 
 Route::prefix('user')->group(function(){
     Route::put('/{id}', [UserController::class, 'update']);
-    Route::get('/me', [UserController::class, 'me']);
     Route::get('/{id}', [UserController::class, 'index']);
     Route::get('/', [UserController::class, 'index']);
     Route::delete('/{id}', [UserController::class, 'delete']);
