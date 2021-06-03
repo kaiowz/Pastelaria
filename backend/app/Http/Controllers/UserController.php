@@ -91,7 +91,7 @@ class UserController extends Controller
         $emailExists = User::where('email', $email)->count();
 
         if ($emailExists != 0) return response()->json(['error'=>'E-mail já cadastrado'], 400);
-        if (!$this->isValidPassword($password)) return response()->json(['error'=>'A senha é muito fraca. Certifique-se de inserir pelo menos um caractere minúsculo, maiúsculo, especial e no mínimo 6 caracteres'], 400);
+        if ($password && !$this->isValidPassword($password)) return response()->json(['error'=>'A senha é muito fraca. Certifique-se de inserir pelo menos um caractere minúsculo, maiúsculo, especial e no mínimo 6 caracteres'], 400);
         if ($password != $passwordConfirmation) return response()->json(['error'=>'Senhas não coincidem'], 422);
 
         if ($name) $user->name = $name;

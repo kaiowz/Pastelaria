@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -22,6 +23,12 @@ class AuthController extends Controller
     public function login(Request $req){
         $email = $req->input('email');
         $password = $req->input('password');
+
+        $canLogin = User::where('email', $email)
+        ->where('isDeleted', true)
+        ->get();
+
+        if ($canLogin) return response()->json(['error'=>'Sua conta foi deletada e não pode ser acessada. Entre em contato com o suporte para mais informações!'], 422);
 
         if ($email && $password){
             $token = Auth::attempt(['email'=>$email, 'password'=>$password]);
