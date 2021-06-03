@@ -24,10 +24,11 @@ Route::prefix('auth')->group(function(){
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
-    Route::post('/register', [AuthController::class, 'create']);
+
 });
 
 Route::prefix('user')->group(function(){
+    Route::post('/', [UserController::class, 'create']);
     Route::put('/{id}', [UserController::class, 'update']);
     Route::get('/{id}', [UserController::class, 'index']);
     Route::get('/', [UserController::class, 'index']);
