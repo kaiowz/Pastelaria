@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Pastry;
+use Image;
 
 class PastryController extends Controller
 {
@@ -29,11 +30,23 @@ class PastryController extends Controller
         $name = trim($req->input('name'));
         $price = floatval($req->input('price'));
 
-        if (!$name && !$price) return response()->json(['error' => 'Preencha os campos corretamente'], 400);
+        $allowedTypes = ['images\jpg', 'images\jpeg', 'images\png'];
+
+        $photo = $req->file('photo');
+
+        if (!$name && !$price && !$photo) return response()->json(['error' => 'Preencha os campos corretamente'], 400);
+
+        if (!in_array($photo->getClientMimeType(), $allowedTypes)) return response()->json(['error' => 'Arquivo não suportado'], 400);
+
+        $filename = md5(time().rand(0, 9999)).'.jpg';
+        $destPath = public_path('/media/assets');
+
+        Image::make($photo->path())->fit(300, 300)->save("$destPath/$filename");
 
         $newPastry = new Pastry();
         $newPastry->name = $name;
         $newPastry->price = $price;
+        $newPastry->photo = $filename;
         $newPastry->save();
 
         return response()->json(['result' => "Pastel criado com sucesso"], 200);
@@ -43,11 +56,27 @@ class PastryController extends Controller
         $name = trim($req->input('name'));
         $price = floatval($req->input('price'));
 
+        $allowedTypes = ['images\jpg', 'images\jpeg', 'images\png'];
+
+        $photo = $req->file('photo');
+
         $pastry = Pastry::find($id);
         if (!$pastry) return response()->json(['error' => 'ID inválido'], 400);
 
         if ($name) $pastry->name = $name;
         if ($price) $pastry->price = $price;
+        if ($photo) {
+            if (!in_array($photo->getClientMimeType(), $allowedTypes)) return response()->json(['error' => 'Arquivo não suportado'], 400);
+
+            $filename = md5(time().rand(0, 9999)).'.jpg';
+            $destPath = public_path('/media/assets');
+
+            $img = Image::make($photo->path())
+                ->fit(300, 300)
+                ->save("$destPath/$filename");
+
+                $pastry->photo = $filename;
+        }
 
         $pastry->save();
 
