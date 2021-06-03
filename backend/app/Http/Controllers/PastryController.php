@@ -30,7 +30,7 @@ class PastryController extends Controller
         $name = trim($req->input('name'));
         $price = floatval($req->input('price'));
 
-        $allowedTypes = ['images\jpg', 'images\jpeg', 'images\png'];
+        $allowedTypes = ['image/jpg', 'image/jpeg', 'image/png'];
 
         $photo = $req->file('photo');
 
@@ -39,7 +39,7 @@ class PastryController extends Controller
         if (!in_array($photo->getClientMimeType(), $allowedTypes)) return response()->json(['error' => 'Arquivo não suportado'], 400);
 
         $filename = md5(time().rand(0, 9999)).'.jpg';
-        $destPath = public_path('/media/assets');
+        $destPath = public_path('/assets');
 
         Image::make($photo->path())->fit(300, 300)->save("$destPath/$filename");
 
@@ -56,7 +56,7 @@ class PastryController extends Controller
         $name = trim($req->input('name'));
         $price = floatval($req->input('price'));
 
-        $allowedTypes = ['images\jpg', 'images\jpeg', 'images\png'];
+        $allowedTypes = ['image/jpg', 'image/jpeg', 'image/png'];
 
         $photo = $req->file('photo');
 
