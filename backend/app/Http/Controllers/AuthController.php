@@ -24,11 +24,8 @@ class AuthController extends Controller
         $email = $req->input('email');
         $password = $req->input('password');
 
-        $canLogin = User::where('email', $email)
-        ->where('isDeleted', true)
-        ->get();
-
-        if ($canLogin) return response()->json(['error'=>'Sua conta foi deletada e não pode ser acessada. Entre em contato com o suporte para mais informações!'], 422);
+        $loginUser = User::where('email', $email)->first();
+        if ($loginUser->isDeleted) return response()->json(['error'=>'Sua conta foi deletada e não pode ser acessada. Entre em contato com o suporte para mais informações!'], 422);
 
         if ($email && $password){
             $token = Auth::attempt(['email'=>$email, 'password'=>$password]);
