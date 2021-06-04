@@ -21,7 +21,9 @@ class OrderController extends Controller
 
     public function index($id = false){
         if (!$id){
-            $orders = Order::all();
+            $orders = Order::where('user_id', $this->loggedUser->id)
+                ->where('isDeleted', false)
+                ->get();
             return response()->json(['result' => $orders], 200);
         }else{
             $order = Order::find($id);
@@ -31,13 +33,13 @@ class OrderController extends Controller
     }
 
     public function create(Request $req){
-        $pastries = $req->input('pastries');
+        $pastriesIds = $req->input('pastries');
 
         $newOrder = new Order();
         $newOrder->user_id = $this->loggedUser->id;
         $newOrder->save();
 
-        foreach($pastries as $pastry){
+        foreach($pastriesIds as $pastry){
             $newSubOrder = new Suborder();
             $newSubOrder->order_id = $newOrder->id;
             $newSubOrder->pastry_id = $pastry;
@@ -58,9 +60,36 @@ class OrderController extends Controller
     }
 
     public function update(Request $req, $id){
+        $_order = Order::find($id);
+        if (!$_order) return response()->json(['error' => "ID inválido"], 400);
+        $_order->user_id = $this->loggedUser->id;
 
+        $pastriesIds = $req->input('pastries');
 
-        return response()->json(['result' => "Pedido atualizado com sucesso"], 200);
+        $subOrders = Suborder::where('order_id', $_order->id)->get();
+
+        foreach($subOrders as $subOrder){
+            $subOrder->delete();
+        }
+
+        foreach($pastriesIds as $pastry){
+            $subOrder = new Suborder();
+            $subOrder->order_id = $_order->id;
+            $subOrder->pastry_id = $pastry;
+            $subOrder->save();
+        }
+
+        $order = Order::with('suborder')->find($_order->id);
+
+        $pastries = [];
+        foreach ($order->suborder as $suborder){
+            $pastry = Pastry::where('id', $suborder->pastry_id)->first();
+            $pastries[] = $pastry;
+        }
+
+        Mail::to($this->loggedUser->email)->send(new OrderDetailsMail($this->loggedUser->name, $order, $pastries));
+
+        return response()->json(['result' => "Pedido registrado com sucesso!"], 200);
     }
 
     public function delete($id = false){
