@@ -13,17 +13,15 @@ class OrderDetailsMail extends Mailable
 
     private $name;
     private $order;
-    private $pastries;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($name, $order, $pastries){
+    public function __construct($name, $order){
         $this->name = $name;
         $this->order = $order;
-        $this->pastries = $pastries;
     }
 
     /**
@@ -36,7 +34,6 @@ class OrderDetailsMail extends Mailable
         return $this->subject("Pastelaria Daora - Detalhes do Pedido")
                 ->view('emails')
                 ->with(['name' => $this->name])
-                ->with(['order' => $this->order])
-                ->with(['pastries' => $this->pastries]);
+                ->with(['order' => $this->order]);
     }
 }

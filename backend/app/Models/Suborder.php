@@ -14,4 +14,8 @@ class Suborder extends Model
     public function order() {
         return $this->belongsTo('App\Models\Order');
     }
+
+    public function pastry(){
+        return $this->hasOne('App\Models\Pastry', 'id', 'pastry_id');
+    }
 }

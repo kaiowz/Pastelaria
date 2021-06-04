@@ -23,11 +23,11 @@ class OrderController extends Controller
         if (!$id){
             $orders = Order::where('user_id', $this->loggedUser->id)
                 ->where('isDeleted', false)
-                ->with('suborder')
+                ->with('suborder.pastry')
                 ->get();
             return response()->json(['result' => $orders], 200);
         }else{
-            $order = Order::with('suborder')->find($id);
+            $order = Order::with('suborder.pastry')->find($id);
             if (!$order) return response()->json(['error'=>'Id inválido'], 400);
             return response()->json(['result' => $order], 200);
         }
@@ -47,17 +47,11 @@ class OrderController extends Controller
             $newSubOrder->save();
         }
 
-        $order = Order::with('suborder')->find($newOrder->id);
+        $order = Order::with('suborder.pastry')->find($newOrder->id);
 
-        $pastries = [];
-        foreach ($order->suborder as $suborder){
-            $pastry = Pastry::where('id', $suborder->pastry_id)->first();
-            $pastries[] = $pastry;
-        }
+        Mail::to($this->loggedUser->email)->send(new OrderDetailsMail($this->loggedUser->name, $order));
 
-        Mail::to($this->loggedUser->email)->send(new OrderDetailsMail($this->loggedUser->name, $order, $pastries));
-
-        return response()->json(['result' => "Pedido registrado com sucesso!"], 200);
+        return response()->json(['result' => $order], 200);
     }
 
     public function update(Request $req, $id){
@@ -80,7 +74,7 @@ class OrderController extends Controller
             $subOrder->save();
         }
 
-        $order = Order::with('suborder')->find($_order->id);
+        $order = Order::with('suborder.pastry')->find($_order->id);
 
         $pastries = [];
         foreach ($order->suborder as $suborder){
@@ -88,7 +82,7 @@ class OrderController extends Controller
             $pastries[] = $pastry;
         }
 
-        Mail::to($this->loggedUser->email)->send(new OrderDetailsMail($this->loggedUser->name, $order, $pastries));
+        Mail::to($this->loggedUser->email)->send(new OrderDetailsMail($this->loggedUser->name, $order));
 
         return response()->json(['result' => "Pedido registrado com sucesso!"], 200);
     }
