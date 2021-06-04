@@ -30,6 +30,7 @@ Route::prefix('auth')->group(function(){
 
 Route::prefix('user')->group(function(){
     Route::post('/', [UserController::class, 'create']);
+    Route::post('/restore/{id}', [UserController::class, 'restore']);
     Route::put('/{id}', [UserController::class, 'update']);
     Route::get('/{id}', [UserController::class, 'index']);
     Route::get('/', [UserController::class, 'index']);
@@ -38,6 +39,7 @@ Route::prefix('user')->group(function(){
 
 Route::prefix('pastry')->group(function(){
     Route::post('/', [PastryController::class, 'create']);
+    Route::post('/restore/{id}', [PastryController::class, 'restore']);
     Route::put('/{id}', [PastryController::class, 'update']);
     Route::get('/{id}', [PastryController::class, 'index']);
     Route::get('/', [PastryController::class, 'index']);
@@ -46,6 +48,7 @@ Route::prefix('pastry')->group(function(){
 
 Route::prefix('order')->group(function(){
     Route::post('/', [OrderController::class, 'create']);
+    Route::post('/restore/{id}', [OrderController::class, 'restore']);
     Route::put('/{id}', [OrderController::class, 'update']);
     Route::get('/{id}', [OrderController::class, 'index']);
     Route::get('/', [OrderController::class, 'index']);

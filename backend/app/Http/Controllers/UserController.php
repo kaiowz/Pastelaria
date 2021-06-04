@@ -21,7 +21,7 @@ class UserController extends Controller
 
     public function index($id = false){
         if (!$id){
-            $users = User::all();
+            $users = User::where('isDeleted', false)->get();
             return response()->json(['result' => $users], 200);
         }else{
             $user = User::find($id);
@@ -109,12 +109,22 @@ class UserController extends Controller
 
     public function delete($id = false){
         $user = User::find($id);
-        if (!$user) return response()->json(['error'=>"Id inválido"]);
+        if (!$user) return response()->json(['error'=>"Id inválido"], 400);
 
         $user->isDeleted = true;
         $user->save();
 
         return response()->json(['result' => "Usuário deletado com sucesso"], 200);
+    }
+
+    public function restore($id = false){
+        $user = User::find($id);
+        if (!$user) return response()->json(['error'=>"Id inválido"], 400);
+
+        $user->isDeleted = false;
+        $user->save();
+
+        return response()->json(['result' => "Usuário restaurado com sucesso"], 200);
     }
 
     private function isValidPassword($pass){

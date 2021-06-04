@@ -23,10 +23,11 @@ class OrderController extends Controller
         if (!$id){
             $orders = Order::where('user_id', $this->loggedUser->id)
                 ->where('isDeleted', false)
+                ->with('suborder')
                 ->get();
             return response()->json(['result' => $orders], 200);
         }else{
-            $order = Order::find($id);
+            $order = Order::with('suborder')->find($id);
             if (!$order) return response()->json(['error'=>'Id inválido'], 400);
             return response()->json(['result' => $order], 200);
         }
@@ -94,11 +95,21 @@ class OrderController extends Controller
 
     public function delete($id = false){
         $order = Order::find($id);
-        if (!$order) return response()->json(['error'=>"Id inválido"]);
+        if (!$order) return response()->json(['error'=>"Id inválido"], 400);
 
         $order->isDeleted = true;
         $order->save();
 
         return response()->json(['result' => "Pedido deletado com sucesso"], 200);
+    }
+
+    public function restore($id){
+        $order = Order::find($id);
+        if (!$order) return response()->json(['error'=>"Id inválido"], 400);
+
+        $order->isDeleted = false;
+        $order->save();
+
+        return response()->json(['result' => "Pedido restaurado com sucesso"], 200);
     }
 }

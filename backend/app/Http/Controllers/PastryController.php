@@ -10,7 +10,7 @@ class PastryController extends Controller
 {
     public function index($id = false){
         if (!$id){
-            $pastries = Pastry::all();
+            $pastries = Pastry::where('isDeleted', false)->get();
             return response()->json(['result' => $pastries], 200);
         }else{
             $pastry = Pastry::find($id);
@@ -78,11 +78,21 @@ class PastryController extends Controller
 
     public function delete($id = false){
         $pastry = Pastry::find($id);
-        if (!$pastry) return response()->json(['error'=>"Id inválido"]);
+        if (!$pastry) return response()->json(['error'=>"Id inválido"], 400);
 
         $pastry->isDeleted = true;
         $pastry->save();
 
         return response()->json(['result' => "Pastel deletado com sucesso"], 200);
+    }
+
+    public function restore($id){
+        $pastry = Pastry::find($id);
+        if (!$pastry) return response()->json(['error'=>"Id inválido"], 400);
+
+        $pastry->isDeleted = false;
+        $pastry->save();
+
+        return response()->json(['result' => "Pastel restaurado com sucesso"], 200);
     }
 }
