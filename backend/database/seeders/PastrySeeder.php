@@ -15,9 +15,9 @@ class PastrySeeder extends Seeder
      */
 
     static $pastries = [
-        ["Carne", 17.99, "photo1.jpg"],
-        ["Queijo", 7.99, "photo2.jpg"],
-        ["Frango", 14.99, "photo3.jpg"],
+        ["Carne", 17.99, "pastel1.jpg"],
+        ["Queijo", 7.99, "pastel2.jpg"],
+        ["Frango", 14.99, "pastel3.jpg"],
     ];
 
     public function run(){

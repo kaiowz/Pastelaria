@@ -10,4 +10,8 @@ class Order extends Model
     use HasFactory;
 
     protected $table = "orders";
+
+    public function suborder() {
+        return $this->hasMany('App\Models\Suborder');
+    }
 }

@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Suborder extends Model
 {
     use HasFactory;
+
+    protected $table = 'suborders';
+
+    public function order() {
+        return $this->belongsTo('App\Models\Order');
+    }
 }

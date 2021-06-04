@@ -25,6 +25,7 @@ class AuthController extends Controller
         $password = $req->input('password');
 
         $loginUser = User::where('email', $email)->first();
+        if (!$loginUser) return response()->json(['error'=>'E-mail e/ou senha errados!'], 400);
         if ($loginUser->isDeleted) return response()->json(['error'=>'Sua conta foi deletada e não pode ser acessada. Entre em contato com o suporte para mais informações!'], 422);
 
         if ($email && $password){
